@@ -1,7 +1,8 @@
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import MultipleObjectsReturned
 from django.http import Http404
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+
 
 from .models import Article
 from .forms import ArticleForm
@@ -30,7 +31,9 @@ def article_create_view(request):
     }
     if form.is_valid():
         article_object = form.save() # with ModelForms only, otherwise get all fields and create
-        context['form'] = ArticleForm() # to leave empty form        
+        context['form'] = ArticleForm() # to leave empty form
+        return redirect(article_object.get_absolute_url())
+        #return redirect("article-detail", slug=article_object.slug)  
         # context['object'] = article_object
         # context['created'] = True 
     return render(request, "articles/create.html", context=context)

@@ -1,5 +1,6 @@
 from django.db import models
 from django.db.models.signals import pre_save, post_save
+from django.urls import reverse
 from django.utils import timezone
 
 from .utils import slugify_instance_title
@@ -16,7 +17,8 @@ class Article(models.Model):
                 null=True, blank=True) # top allow empty values
 
     def get_absolute_url(self):
-        return f'/articles/{self.slug}/'
+        # return f'/articles/{self.slug}/'
+        return reverse("article-detail", kwargs={"slug":self.slug})
 
     def save(self, *args, **kwargs):
         # if self.slug is None:

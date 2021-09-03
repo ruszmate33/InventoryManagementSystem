@@ -2,6 +2,8 @@
 
 {% block content %}
 
+<a href='{% url "article-create" %}'>Create Article</a>
+
 {% for obj in object_list %}
 <ul>
     <li>
