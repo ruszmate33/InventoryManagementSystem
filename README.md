@@ -1,0 +1,1 @@
+My inventory management system with Django
