@@ -5,7 +5,7 @@
 {% for article in object_list %}
 <ul>
     <li>
-        <a href="/articles/{{article.id}}">
+        <a href="/articles/{{article.slug}}">
             {{ article.title }} ({{ article.id }}), {{ article.content }}
         </a>
     </li>

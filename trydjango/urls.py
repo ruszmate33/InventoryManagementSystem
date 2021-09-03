@@ -27,7 +27,7 @@ urlpatterns = [
     path('', home_view),
     path('articles/', article_search_view),
     path('articles/create/', article_create_view), # this  has to be before 'articles/<str:name>' to hit
-    path('articles/<int:id>/', article_detail_view),
+    path('articles/<slug:slug>/', article_detail_view),
     path('login/', account_views.login_view),
     path('logout/', account_views.logout_view),
     path('register/', account_views.register_view),
