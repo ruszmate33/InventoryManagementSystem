@@ -25,8 +25,8 @@ class Article(models.Model):
 def article_pre_save(sender, instance, *args, **kwargs):
     print('pre_save')
     print(sender, instance)
-    # if instance.slug is None:
-    instance.slug = slugify(instance.title)
+    if instance.slug is None:
+        instance.slug = slugify(instance.title)
 
 pre_save.connect(article_pre_save, sender=Article)
 # alternatively with the reveiver decorator
