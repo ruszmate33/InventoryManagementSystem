@@ -21,12 +21,21 @@ class Article(models.Model):
         # super().save(*args, **kwargs) is equivalent to:
         # obj = Article.object.get(id=1)
         # obj.save()
+
+def slugify_instance_title(instance, save=False):
+    slug = slugify(instance.title)
+    qs = Article.objects.filter(slug=slug).exclude(id=instance.id)
+    if qs.exists():
+        slug = f"{slug}-{qs.count() + 1}"
+    instance.slug = slug
+    if save:
+        instance.save()
+    return instance # not completely necessary
     
 def article_pre_save(sender, instance, *args, **kwargs):
     print('pre_save')
-    print(sender, instance)
     if instance.slug is None:
-        instance.slug = slugify(instance.title)
+        slugify_instance_title(instance, save=False)
 
 pre_save.connect(article_pre_save, sender=Article)
 # alternatively with the reveiver decorator
@@ -35,8 +44,7 @@ def article_post_save(sender, instance, created, *args, **kwargs):
     print('post_save')
     print(args, kwargs)
     if created: # we need a bool like this to stop recursively & endlessly calling
-        instance.slug = "this is my slug"
-        instance.save()
+        slugify_instance_title(instance, save=True)
 
 
 post_save.connect(article_post_save, sender=Article)
