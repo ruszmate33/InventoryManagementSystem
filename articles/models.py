@@ -15,6 +15,9 @@ class Article(models.Model):
                 # default=timezone.now, \
                 null=True, blank=True) # top allow empty values
 
+    def get_absolute_url(self):
+        return f'/articles/{self.slug}/'
+
     def save(self, *args, **kwargs):
         # if self.slug is None:
         #     self.slug = slugify(self.title) # beware of nonunique titles!
