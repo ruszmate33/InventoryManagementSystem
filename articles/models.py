@@ -18,6 +18,8 @@ class Article(models.Model):
     def save(self, *args, **kwargs):
         # if self.slug is None:
         #     self.slug = slugify(self.title) # beware of nonunique titles!
+        if self.slug is None:
+            slugify_instance_title(self, save=False)
         super().save(*args, **kwargs)
         # super().save(*args, **kwargs) is equivalent to:
         # obj = Article.object.get(id=1)
@@ -39,12 +41,12 @@ def slugify_instance_title(instance, save=False, new_slug=None):
         instance.save()
     return instance # not completely necessary
     
-def article_pre_save(sender, instance, *args, **kwargs):
-    print('pre_save')
-    if instance.slug is None:
-        slugify_instance_title(instance, save=False)
+# def article_pre_save(sender, instance, *args, **kwargs):
+#     print('pre_save')
+#     if instance.slug is None:
+#         slugify_instance_title(instance, save=False)
 
-pre_save.connect(article_pre_save, sender=Article)
+# pre_save.connect(article_pre_save, sender=Article)
 # alternatively with the reveiver decorator
 
 def article_post_save(sender, instance, created, *args, **kwargs):
