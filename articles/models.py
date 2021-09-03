@@ -28,7 +28,8 @@ def slugify_instance_title(instance, save=False, new_slug=None):
         slug = new_slug
     else:
         slug = slugify(instance.title)
-    qs = Article.objects.filter(slug=slug).exclude(id=instance.id)
+    Klass = instance.__class__
+    qs = Klass.objects.filter(slug=slug).exclude(id=instance.id)
     if qs.exists():
         random_int = random.randint(200_000, 500_000)
         slug = f"{slug}-{random_int}"
