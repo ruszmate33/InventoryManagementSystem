@@ -1,4 +1,5 @@
 from django.contrib.auth.decorators import login_required
+from django.db.models import Q
 from django.core.exceptions import MultipleObjectsReturned
 from django.http import Http404
 from django.shortcuts import render, redirect
@@ -11,14 +12,14 @@ from .forms import ArticleForm
 def article_search_view(request):
     query_dict = request.GET # this is a dictionary
     try:
-        query = int(query_dict.get("query")) # <input type='text' name='query' />
+        query = query_dict.get("q") # <input type='text' name='query' />
     except:
         query = None
-    article_obj = None
+    qs = Article.objects.all()
     if query is not None:
-        article_obj = Article.objects.get(id=query)
+        qs = Article.objects.filter(title__icontains=query)
     context = {
-        "object": article_obj
+        "object_list": qs
     }
     return render(request, "articles/search.html", context=context)
 
