@@ -58,3 +58,10 @@ class ArticleTestCase(TestCase):
     #     qs = Article.objects.filter(slug__exact=slug)
     #     self.assertEquals(qs.count(), 1)
 
+    def test_article_search_manager(self):
+        qs = Article.objects.search(query='hello world')
+        self.assertEqual(qs.count(), self.num_entries)
+        qs = Article.objects.search(query='hello')
+        self.assertEqual(qs.count(), self.num_entries)
+        qs = Article.objects.search(query='wonderfull')
+        self.assertEqual(qs.count(), self.num_entries)

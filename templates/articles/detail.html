@@ -4,7 +4,14 @@
 <h1>
     {{ object.title }} ({{ object.id }})
 </h1>
-<h2>
+<p>
+    Author: {{ object.user }}
+    {% if request.user == object.user %}
+    This is you!
+    {% endif %}
+    
+</p>
+<p>
     {{ object.content }}
-</h2>
+</p>
 {% endblock content %}
