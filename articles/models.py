@@ -8,13 +8,22 @@ from .utils import slugify_instance_title
 
 # Create your models here.
 
-class ArticleManager(models.Manager):
+class ArticleQuerySet(models.QuerySet):
+    # if we want to be able to do e.g.: qs = Article.objects.filter(title__icontains='t').search(query=query)
+    # we need to define its own custom QS like this
     def search(self, query=None):
         if query is None or query == "":
-            return self.get_queryset().none() # []
+            return self.none() # []
        
         lookups = Q(title__icontains=query) | Q(content__icontains=query)
-        return self.get_queryset().filter(lookups)
+        return self.filter(lookups)
+
+class ArticleManager(models.Manager):
+    def get_queryset(self):
+        return ArticleQuerySet(self.model, using=self._db)
+
+    def search(self, query=None):
+        return self.get_queryset().search(query=query)
 
 class Article(models.Model):
     title = models.CharField(max_length=120)
