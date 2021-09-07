@@ -10,13 +10,8 @@ from .forms import ArticleForm
 # Create your views here.
 def article_search_view(request):
     query_dict = request.GET # this is a dictionary
-    try:
-        query = query_dict.get("q") # <input type='text' name='query' />
-    except:
-        query = None
-    qs = Article.objects.all()
-    if query is not None:
-       qs = Article.objects.search(query) # lets search in the model
+    query = query_dict.get("q") # <input type='text' name='query' />
+    qs = Article.objects.search(query=query) # lets search in the model
     context = {
         "object_list": qs
     }

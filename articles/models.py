@@ -9,9 +9,12 @@ from .utils import slugify_instance_title
 # Create your models here.
 
 class ArticleManager(models.Manager):
-    def search(self, query):
+    def search(self, query=None):
+        if query is None or query == "":
+            return self.get_queryset().none() # []
+       
         lookups = Q(title__icontains=query) | Q(content__icontains=query)
-        return Article.objects.filter(lookups)
+        return self.get_queryset().filter(lookups)
 
 class Article(models.Model):
     title = models.CharField(max_length=120)
