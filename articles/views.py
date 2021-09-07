@@ -1,5 +1,4 @@
 from django.contrib.auth.decorators import login_required
-from django.db.models import Q, lookups
 from django.core.exceptions import MultipleObjectsReturned
 from django.http import Http404
 from django.shortcuts import render, redirect
@@ -17,8 +16,7 @@ def article_search_view(request):
         query = None
     qs = Article.objects.all()
     if query is not None:
-        lookups = Q(title__icontains=query) | Q(content__icontains=query)
-        qs = Article.objects.filter(lookups)
+       qs = Article.objects.search(query) # lets search in the model
     context = {
         "object_list": qs
     }
