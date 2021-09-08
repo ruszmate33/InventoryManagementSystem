@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>
+    {{ object.title }} ({{ object.id }})
+</h1>
+<p>
+    Author: {{ object.user }}
+    {% if request.user == object.user %}
+    This is you!
+    {% endif %}
+    
+</p>
+<p>
+    {{ object.content }}
+</p>
+{% endblock content %}
