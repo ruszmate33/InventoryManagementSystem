@@ -17,16 +17,25 @@ class UserTestCase(TestCase):
 class RecipeTestCase(TestCase):
     def setUp(self):
         self.user_a = User.objects.create_user('my_user', password='asdfqwert1234')
+
         self.recipe_a = Recipe.objects.create(
             user=self.user_a, 
             name='Grilled chicken')
+
         self.recipe_b = Recipe.objects.create(
             user=self.user_a, 
             name='Grilled chicken tacos')
+
         self.recipe_ingredient_a = RecipeIngredient.objects.create(
             recipe=self.recipe_a,
             name='chicken',
-            quantity='1',
+            quantity='2 1/4',
+            unit='kg')
+
+        self.recipe_ingredient_b = RecipeIngredient.objects.create(
+            recipe=self.recipe_a,
+            name='chicken',
+            quantity='2a45sb',
             unit='kg')
 
     def test_user_count(self):
@@ -46,17 +55,17 @@ class RecipeTestCase(TestCase):
     def test_recipe_recipeIngredient_reverse_count(self):
         recipe = self.recipe_a
         qs = recipe.recipeingredient_set.all() # for some reason in {highestModel}.{child}_set.all(), the {child} is ALL-LOWERCASE
-        self.assertEqual(qs.count(), 1)
+        self.assertEqual(qs.count(), 2)
 
     def test_recipe_recipeIngredient_forward_count(self):
         recipe = self.recipe_a
         qs = RecipeIngredient.objects.filter(recipe=recipe)
-        self.assertEqual(qs.count(), 1)
+        self.assertEqual(qs.count(), 2)
 
     def test_user_two_level_relation(self):
         user = self.user_a
         qs = RecipeIngredient.objects.filter(recipe__user=user) # RecipeIngredient -> Recipe -> User
-        self.assertEqual(qs.count(), 1)
+        self.assertEqual(qs.count(), 2)
 
     # def test_user_three_level_relation(self):
     #     # eg in models:     class RecipeIngredientImage(models.Model):
@@ -70,14 +79,14 @@ class RecipeTestCase(TestCase):
         user = self.user_a
         recipeIngredient_ids = list(user.recipe_set.all().values_list('recipeingredient__id', flat=True)) # User -> Recipe -> RecipeIngredient
         qs = RecipeIngredient.objects.filter(id__in=recipeIngredient_ids)
-        self.assertEqual(qs.count(), 1)
+        self.assertEqual(qs.count(), 2)
 
     # instead of the complicated mess of "_reverse"
     def test_user_two_level_relation_via_recipes(self):
         user = self.user_a
         ids = user.recipe_set.all().values_list("id", flat=True)
         qs = RecipeIngredient.objects.filter(recipe__id__in=ids) # RecipeIngredient -> Recipe -> User
-        self.assertEqual(qs.count(), 1)
+        self.assertEqual(qs.count(), 2)
 
     def test_unit_measure_validation(self):
         # not with create just construct it
@@ -100,5 +109,9 @@ class RecipeTestCase(TestCase):
                 unit=invalid_unit
             )
             ingredient.full_clean() # similar to form.is_valid()
+
+    def test_quantity_as_float(self):
+        self.assertIsNotNone(self.recipe_ingredient_a.quantity_as_float) # should exist
+        self.assertIsNone(self.recipe_ingredient_b.quantity_as_float)    # should not exist
 
     
